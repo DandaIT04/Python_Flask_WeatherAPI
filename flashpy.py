@@ -8,16 +8,30 @@ app = Flask(__name__)
 def home():
     if request.method == 'POST':
         city = request.form.get('city')
+
+        if city == '':
+            city = 'Singapore'
+
         url = 'http://api.openweathermap.org/data/2.5/weather?q={}&appid=535ec0b2677a9801f9167982525a5bbf&units=imperial'
 
         r = requests.get(url.format(city)).json()
 
-        weather = {
+        try:
+            weather = {
             'city' : city,
             'temperature' : r['main']['temp'],
             'description' : r['weather'][0]['description'],
             'icon' : r['weather'][0]['icon'],
-        }
+            }
+        except:
+            city = 'Singapore'
+            r = requests.get(url.format(city)).json()
+            weather = {
+            'city' : city,
+            'temperature' : r['main']['temp'],
+            'description' : r['weather'][0]['description'],
+            'icon' : r['weather'][0]['icon'],
+            }
 
         weather['temperature'] = round(weather['temperature']/2.4)
 
